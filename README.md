@@ -1,2 +1,4 @@
 # Dock
-The iOS 11 dock on iOS 10.
+Dock is a tweak that brings the iOS 11 iPad dock to older devices. This includes the floating rounded dock, as well as the floating pop-up dock above apps.
+
+![Preview](https://i.imgur.com/vXppGe7.png)
