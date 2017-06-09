@@ -20,8 +20,8 @@
 
 @interface SBIconController : NSObject
 -(SBIconViewMap *)homescreenIconViewMap;
-+(id)sharedInstance;
--(SBIconModel *)model;
+// +(id)sharedInstance;
+// -(SBIconModel *)model;
 @end
 
 @interface SBIconLegibilityLabelView : UIView
@@ -31,10 +31,10 @@
 -(id)initWithPrivateStyle:(long long)arg1;
 @end
 
-static BOOL enabled = YES;
-static BOOL floatDock = YES;
+static BOOL enabled = NO;
+static BOOL floatDock = NO;
 static BOOL hideLabels = YES;
-static NSInteger floatyvalue = 475;
+static NSInteger floatyvalue = 470;
 
 // Bundle id's for the dock
 NSString *iconOneId = @"com.apple.Maps";
@@ -56,7 +56,7 @@ CGFloat dockHeight;
 }
 
 - (void)setFrame:(CGRect)frame {
-	frame = CGRectMake(5, frame.origin.y - 1, frame.size.width - 10, frame.size.height - 10);
+	frame = CGRectMake(5, frame.origin.y - 2, frame.size.width - 10, frame.size.height - 10);
 	%orig(frame);
 
 	dockWidth = frame.size.width;
@@ -107,24 +107,24 @@ static void notificationCallback(CFNotificationCenterRef center, void *observer,
 }
 
 %ctor {
-	NSLog(@"Dock: Prefs should be loaded.");
 	CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), NULL, notificationCallback, (CFStringRef)UIApplicationDidFinishLaunchingNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
 
 	NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.nathanaccidentally.dockprefs.plist"];
 	
 	if (prefs) {
-		if([[prefs objectForKey:@"isEnabled"] boolValue] == YES) {
-			NSLog(@"Dock: Prefs enabled key triggred");
-			%init(dock);
-			enabled = YES;
+		if([prefs objectForKey:@"isEnabled"]) {
+			enabled = [[prefs objectForKey:@"isEnabled"] boolValue];
+			if ([[prefs objectForKey:@"isEnabled"] boolValue] == YES) {
+				%init(dock)
+			}
 		}
 
-		if([[prefs objectForKey:@"floatDock"] boolValue] == YES) {
-			floatDock = YES;
+		if([prefs objectForKey:@"floatDock"]) {
+			floatDock = [[prefs objectForKey:@"floatDock"] boolValue];
 		}
 
-		if([[prefs objectForKey:@"hideLabels"] boolValue] == YES) {
-			hideLabels = YES;
+		if([prefs objectForKey:@"hideLabels"]) {
+			hideLabels = [[prefs objectForKey:@"hideLabels"] boolValue];
 		}
 
 		// Settings for floating dock.

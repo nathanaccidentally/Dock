@@ -64,9 +64,9 @@
     		<key>cell</key>
     		<string>PSEditTextCell</string>
     		<key>placeholder</key>
-   		 	<string>475</string>
+   		 	<string>470</string>
    		 	<key>bestGuess</key>
-   		 	<string>475</string>
+   		 	<string>470</string>
    		 	<key>defaults</key>
    		 	<string>com.nathanaccidentally.dockprefs</string>
    			<key>isNumeric</key>
