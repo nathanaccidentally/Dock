@@ -1,9 +1,9 @@
 Package: com.nathanaccidentally.dock
 Name: Dock
 Depends: mobilesubstrate
-Version: 0.0.1
+Version: 0.0.2
 Architecture: iphoneos-arm
-Description: Fully customizeable dock.
+Description: The iOS 11 dock on iOS 10.
 Maintainer: nathanaccidentally
 Author: nathanaccidentally
 Section: Tweaks
