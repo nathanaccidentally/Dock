@@ -27,7 +27,6 @@
 
 @interface SBIconViewMap : NSObject
 - (SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
-+ (id)iconViewForIcon:(id)arg1;
 @end
 
 @interface SBIconModel : NSObject
@@ -161,7 +160,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
 
 		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight)];
-		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.10]];
+		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.25]];
 
 		NSLog(@"Dock: Our floating dock instance of SBDockView has been created. Making blur view.");
 
@@ -170,16 +169,24 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		NSLog(@"Dock: Created _UIBackdropView blur and attached it to the floatingDock as a subview. Creating our SpringBoard icons.");
 
-		[SBIconViewMap iconViewForIcon:iconOneID];
-
 		SBIcon *iconOne = [[iconController model] expectedIconForDisplayIdentifier:iconOneID];
         SBIconView *iconViewOne = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconOne];
 
         SBIcon *iconTwo = [[iconController model] expectedIconForDisplayIdentifier:iconTwoID];
         SBIconView *iconViewTwo = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconTwo];
 
+        SBIcon *iconThree = [[iconController model] expectedIconForDisplayIdentifier:iconThreeID];
+        SBIconView *iconViewThree = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconThree];
+
+        SBIcon *iconFour = [[iconController model] expectedIconForDisplayIdentifier:iconFourID];
+        SBIconView *iconViewFour = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconFour];
+
+        NSLog(@"Dock: Attaching icons to our floating dock.");
+
         [floatingDock addSubview:iconViewOne];
         [floatingDock addSubview:iconViewTwo];
+        [floatingDock addSubview:iconViewThree];
+        [floatingDock addSubview:iconViewFour];
 
         NSLog(@"Dock: Should have created icons and attached them to the floatingDock.");
         NSLog(@"Dock: Attaching floatingDock to our window and displaying result.");
