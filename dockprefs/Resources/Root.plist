@@ -95,6 +95,8 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Other</string>
+			<key>footerText</key>
+			<string>Thanks for using Dock! Built by nathanaccidentally.</string>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -111,12 +113,6 @@
 			<string>PSButtonCell</string>
 			<key>label</key>
 			<string>Tweet Me 🐧</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>Thanks for using Dock! Built by nathanaccidentally.</string>
 		</dict>
 	</array>
 	<key>title</key>
