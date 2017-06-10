@@ -24,12 +24,14 @@
 - (SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
 @end
 
-// SBIconModel has incorrect headers. Looking into this.
-
 @interface SBIconModel : NSObject
-// - (SBIconViewMap *)homescreenIconViewMap;
+-(id)expectedIconForDisplayIdentifier:(id)arg1;
+@end
+
+@interface SBIconController : UIViewController
+- (SBIconViewMap *)homescreenIconViewMap;
 + (id)sharedInstance;
-// - (SBIconModel *)model;
+- (SBIconModel *)model;
 @end
 
 // This is for the blur on our floating dock.
@@ -53,14 +55,10 @@ CGFloat setDockHeight; // Being used to store CGFloats of frame values from our 
 // Now we need to set defalut strings for our icon views.
 // These are bundle id's taken from the settings app.
 
-NSString *iconOneID = @""; // First icon on the left. Next ones are so on.
-NSString *iconTwoID = @"";
-NSString *iconThreeID = @"";
-NSString *iconFourID = @"";
-
-// Great! Let's set up a SBIconController reference.
-
-SBIconController *iconController = [%c(SBIconController) sharedInstance]; // Call this when you wanna make an SBIconController instance.
+NSString *iconOneID = @"com.apple.mobilephone"; // First icon on the left. Next ones are so on.
+NSString *iconTwoID = @"com.apple.mobilesafari";
+NSString *iconThreeID = @"com.apple.mobilemail";
+NSString *iconFourID = @"com.apple.Music";
 
 // Now we can actually do stuff. Let's start by making our group with anything we want in it.
 
@@ -151,10 +149,8 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		NSLog(@"Dock: Created _UIBackdropView blur and attached it to the floatingDock as a subview. Creating our SpringBoard icons.");
 
-		// SpringBoard icons commented out right now because of header issues.
-
 		// SBIcon *iconOne = [[iconController model] expectedIconForDisplayIdentifier:iconOneID];
-        // SBIconView *iconViewOne = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconOne];
+        // SBIconView *iconViewOne = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:iconOne];
         // [floatingDock addSubview:iconViewOne];
 
         NSLog(@"Dock: Should have created icons and attached them to the floatingDock.");
@@ -181,7 +177,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 			if ([[prefs objectForKey:@"isEnabled"] boolValue] == YES) {
 				%init(dock);
-				NSLog(@"Dock: Prefs told me to init the tweak. oops.");
+				NSLog(@"Dock: Prefs told me to init the tweak. I will now tell dock to do its thing!");
 			}
 		}
 
@@ -199,10 +195,11 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 			floatyValue = [[prefs objectForKey:@"floatyvalue"] intValue];
 		}
 
-		if([prefs objectForKey:@"iconOneId"]) {
-			iconOneID = [[prefs objectForKey:@"iconOneId"] stringValue];
+		if([prefs objectForKey:@"iconOneID"]) {
+			iconOneID = [[prefs objectForKey:@"iconOneID"] stringValue];
 		}
 	}
 }
 
 // Phew. Why wasn't I warned a rewrite would be hard?
+// Also I have no idea why, but Dock depends on ClassicFolders.
