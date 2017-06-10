@@ -25,7 +25,7 @@
 @end
 
 @interface SBIconModel : NSObject
--(id)expectedIconForDisplayIdentifier:(id)arg1;
+- (id)expectedIconForDisplayIdentifier:(id)arg1;
 @end
 
 @interface SBIconController : UIViewController
@@ -45,6 +45,10 @@
 static BOOL enabled = NO;
 static BOOL floatDock = NO;
 static BOOL hideLabels = NO;
+
+// Now here's a local variable for SBIcon.
+
+SBIconController *iconController = [%c(SBIconController) sharedInstance];
 
 // Now we will set other things like values for our frames (CGFloat) and an NSInteger which will also become a float for use with frame.
 
@@ -85,7 +89,7 @@ NSString *iconFourID = @"com.apple.Music";
 	// Here we need to make the dock more slim both width and height wise, as well as move it up slightly.
 	NSLog(@"Dock: setFrame was called on the dock, setting width, height, x, and y values.");
 
-	frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+	frame = CGRectMake(5, frame.origin.y - 2, frame.size.width - 10, frame.size.height - 5);
 	%orig(frame);
 
 	// Now we need to store our frame values within our CGFloat variables.
@@ -140,7 +144,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
 
 		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight)];
-		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.20]];
+		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.10]];
 
 		NSLog(@"Dock: Our floating dock instance of SBDockView has been created. Making blur view.");
 
@@ -149,9 +153,9 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		NSLog(@"Dock: Created _UIBackdropView blur and attached it to the floatingDock as a subview. Creating our SpringBoard icons.");
 
-		// SBIcon *iconOne = [[iconController model] expectedIconForDisplayIdentifier:iconOneID];
-        // SBIconView *iconViewOne = [[[%c(SBIconController) sharedInstance] homescreenIconViewMap] mappedIconViewForIcon:iconOne];
-        // [floatingDock addSubview:iconViewOne];
+		SBIcon *iconOne = [[iconController model] expectedIconForDisplayIdentifier:iconOneID];
+        SBIconView *iconViewOne = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconOne];
+        [floatingDock addSubview:iconViewOne];
 
         NSLog(@"Dock: Should have created icons and attached them to the floatingDock.");
         NSLog(@"Dock: Attaching floatingDock to our window and displaying result.");
