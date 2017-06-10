@@ -121,17 +121,21 @@ NSString *iconFourID = @"com.apple.Music";
 
 %end
 
+// The below is disabled purley because it doesn't work how it should.
+
+/*
 %hook _SBFakeBlurView
 
 - (void)layoutSubviews {
 	%orig;
-	if ([self.superview.superview isMemberOfClass:objc_getClass("SBDockView")]) {
+	if ([self.superview.superview isMemberOfClass:objc_getClass("SBDockView")] && floatDock) {
 		NSLog(@"Dock: Hiding blur view for orig dock.");
 		self.hidden = YES;
 	}
 }
 
 %end
+*/
 
 // Now we're done so we need to end our group.
 %end
@@ -154,12 +158,12 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: We have been cleared to create our own dock view. Creating.");
 
 		// Here's our window we're making.
-		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, floatyValue, UIScreen.mainScreen.bounds.size.width, setDockHeight)];
+		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, floatyValue, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
 		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
 
-		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight)];
+		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
 		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.25]];
 
 		NSLog(@"Dock: Our floating dock instance of SBDockView has been created. Making blur view.");
