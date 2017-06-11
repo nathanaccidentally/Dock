@@ -8,6 +8,7 @@ The floating dock is another SBDockView, so it should be compatible with other d
 **This branch includes:**
 * Basic support for SpringBoard icons.
 * Now the dock floats after the re-write.
-* Should add support for hiding the dock on the SpringBoard, but it's disabled for now. rip. 💀
+* Should add support for hiding the dock on the SpringBoard.
+* Now the floating dock will inhereit all values from the original dock.
 
 If you wanna fork Dock, please fork this branch. 🌳
