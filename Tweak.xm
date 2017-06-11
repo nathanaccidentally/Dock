@@ -54,6 +54,8 @@ static BOOL hideLabels = NO;
 
 // Now we will set other things like values for our frames (CGFloat) and an NSInteger which will also become a float for use with frame.
 
+static NSInteger floatyValue = 0; // Added to final Y value of our UIVIew.
+
 CGFloat setDockWidth; // Being used to store CGFloats of frame values from our final set dock.
 CGFloat setDockHeight; // Being used to store CGFloats of frame values from our final set dock.
 CGFloat setDockY; // Being used to store CGFloats of frame values from our final set dock.
@@ -158,7 +160,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: We have been cleared to create our own dock view. Creating.");
 
 		// Here's our window we're making.
-		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY + floatyValue, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
 		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
@@ -230,7 +232,11 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		NSLog(@"Dock: Loading settings for floating dock.");
 
-		if([prefs objectForKey:@"iconOneID"]) {
+		if ([prefs objectForKey:@"floatyValue"]) {
+			floatyValue = [[prefs objectForKey:@"floatyValue"] intValue];
+		}
+
+		if ([prefs objectForKey:@"iconOneID"]) {
 			iconOneID = [[prefs objectForKey:@"iconOneID"] stringValue];
 		}
 	}

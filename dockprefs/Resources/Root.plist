@@ -64,6 +64,22 @@
     		<key>cell</key>
     		<string>PSEditTextCell</string>
     		<key>placeholder</key>
+   		 	<string>0</string>
+   		 	<key>bestGuess</key>
+   		 	<string>0</string>
+   		 	<key>defaults</key>
+   		 	<string>com.nathanaccidentally.dockprefs</string>
+   			<key>isNumeric</key>
+   		 	<true/>
+   		 	<key>key</key>
+   		 	<string>floatyValue</string>
+   		 	<key>label</key>
+    		<string>Y Value Difference</string>
+		</dict>
+		<dict>
+    		<key>cell</key>
+    		<string>PSEditTextCell</string>
+    		<key>placeholder</key>
     		<string>com.apple.mobilephone</string>
     		<key>bestGuess</key>
     		<string>com.apple.mobilephone</string>
