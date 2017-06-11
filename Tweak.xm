@@ -14,6 +14,7 @@
 // For hiding the blur.
 
 @interface _SBFakeBlurView : UIView
+- (void)setHidden:(BOOL)hidden;
 @end
 
 // SBIcon stuff for floating dock.
@@ -53,7 +54,6 @@ static BOOL hideLabels = NO;
 
 // Now we will set other things like values for our frames (CGFloat) and an NSInteger which will also become a float for use with frame.
 
-static NSInteger floatyValue = 470; // Is to be used when creating our floating UIWindow, is user configurable.
 CGFloat setDockWidth; // Being used to store CGFloats of frame values from our final set dock.
 CGFloat setDockHeight; // Being used to store CGFloats of frame values from our final set dock.
 
@@ -97,6 +97,7 @@ NSString *iconFourID = @"com.apple.Music";
 
 	setDockWidth = self.frame.size.width;
 	setDockHeight = self.frame.size.height;
+	setDockY = self.frame.origin.y;
 
 	NSLog(@"Dock: setFrame has finished running on the dock.");
 }
@@ -121,21 +122,19 @@ NSString *iconFourID = @"com.apple.Music";
 
 %end
 
-// The below is disabled purley because it doesn't work how it should.
+// This might affect the CC. But I think these new changes should work (but only if we're told to float the dock).
 
-/*
 %hook _SBFakeBlurView
 
 - (void)layoutSubviews {
 	%orig;
 	if ([self.superview.superview isMemberOfClass:objc_getClass("SBDockView")] && floatDock) {
 		NSLog(@"Dock: Hiding blur view for orig dock.");
-		self.hidden = YES;
+		[self setHidden:YES];
 	}
 }
 
 %end
-*/
 
 // Now we're done so we need to end our group.
 %end
@@ -158,7 +157,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: We have been cleared to create our own dock view. Creating.");
 
 		// Here's our window we're making.
-		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, floatyValue, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDocyY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
 		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
@@ -229,10 +228,6 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		}
 
 		NSLog(@"Dock: Loading settings for floating dock.");
-
-		if([prefs objectForKey:@"floatyvalue"]) {
-			floatyValue = [[prefs objectForKey:@"floatyvalue"] intValue];
-		}
 
 		if([prefs objectForKey:@"iconOneID"]) {
 			iconOneID = [[prefs objectForKey:@"iconOneID"] stringValue];
