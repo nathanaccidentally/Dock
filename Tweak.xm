@@ -56,6 +56,7 @@ static BOOL hideLabels = NO;
 
 CGFloat setDockWidth; // Being used to store CGFloats of frame values from our final set dock.
 CGFloat setDockHeight; // Being used to store CGFloats of frame values from our final set dock.
+CGFloat setDockY; // Being used to store CGFloats of frame values from our final set dock.
 
 // Now we need to set defalut strings for our icon views.
 // These are bundle id's taken from the settings app.
@@ -157,7 +158,7 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: We have been cleared to create our own dock view. Creating.");
 
 		// Here's our window we're making.
-		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDocyY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
 		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
