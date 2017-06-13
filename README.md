@@ -3,7 +3,12 @@ Dock is a tweak that brings the iOS 11 iPad dock to older devices. This includes
 
 The floating dock is another SBDockView, so it should be compatible with other dock tweaks.
 
- 
-![Preview](https://i.imgur.com/MQQqmVY.png)
+**This branch is for experimental versions of Dock, if you wanna compile the main version, compile from the Master branch.**
 
-Configure options from settings.
+**This branch includes:**
+* Basic support for SpringBoard icons.
+* Now the dock floats after the re-write.
+* Should add support for hiding the dock on the SpringBoard.
+* Now the floating dock will inhereit all values from the original dock.
+
+If you wanna fork Dock, please fork this branch. 🌳
