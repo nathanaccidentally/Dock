@@ -11,12 +11,6 @@
 @interface SBIconLegibilityLabelView : UIView
 @end
 
-// For hiding the blur.
-
-@interface _SBFakeBlurView : UIView
-- (void)setHidden:(BOOL)hidden;
-@end
-
 // SBIcon stuff for floating dock.
 // Thanks to Wizages for the help with icons.
 
@@ -120,20 +114,6 @@ NSString *iconFourID = @"com.apple.Music";
 	if ([self.superview.superview isMemberOfClass:objc_getClass("SBDockIconListView")] && hideLabels) {
 		[self setHidden:YES];
 		NSLog(@"Dock: Icon labels should be hidden.");
-	}
-}
-
-%end
-
-// This might affect the CC. But I think these new changes should work (but only if we're told to float the dock).
-
-%hook _SBFakeBlurView
-
-- (void)layoutSubviews {
-	%orig;
-	if ([self.superview.superview isMemberOfClass:objc_getClass("SBDockView")] && floatDock) {
-		NSLog(@"Dock: Hiding blur view for orig dock.");
-		[self setHidden:YES];
 	}
 }
 
