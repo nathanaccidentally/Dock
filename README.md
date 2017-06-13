@@ -7,5 +7,3 @@ The floating dock is another SBDockView, so it should be compatible with other d
 ![Preview](https://i.imgur.com/MQQqmVY.png)
 
 Configure options from settings.
-
-Test
