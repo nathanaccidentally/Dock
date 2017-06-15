@@ -61,20 +61,16 @@
 			<string>Floating Dock Settings</string>
 		</dict>
 		<dict>
-    		<key>cell</key>
-    		<string>PSEditTextCell</string>
-    		<key>placeholder</key>
-   		 	<string>0</string>
-   		 	<key>bestGuess</key>
-   		 	<string>0</string>
-   		 	<key>defaults</key>
-   		 	<string>com.nathanaccidentally.dockprefs</string>
-   			<key>isNumeric</key>
-   		 	<true/>
-   		 	<key>key</key>
-   		 	<string>floatyValue</string>
-   		 	<key>label</key>
-    		<string>Y Value Difference</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.nathanaccidentally.dockprefs</string>
+			<key>key</key>
+			<string>dragDock</string>
+			<key>label</key>
+			<string>Draggable Dock</string>
 		</dict>
 		<dict>
     		<key>cell</key>
@@ -88,7 +84,49 @@
     		<key>key</key>
     		<string>iconOneID</string>
     		<key>label</key>
-    		<string>Icon 1 Bundle ID 🌙</string>
+    		<string>Icon 1 Bundle ID</string>
+		</dict>
+		<dict>
+    		<key>cell</key>
+    		<string>PSEditTextCell</string>
+    		<key>placeholder</key>
+    		<string>com.apple.mobilesafari</string>
+    		<key>bestGuess</key>
+    		<string>com.apple.mobilesafari</string>
+    		<key>defaults</key>
+    		<string>com.nathanaccidentally.dockprefs</string>
+    		<key>key</key>
+    		<string>iconTwoID</string>
+    		<key>label</key>
+    		<string>Icon 2 Bundle ID</string>
+		</dict>
+		<dict>
+    		<key>cell</key>
+    		<string>PSEditTextCell</string>
+    		<key>placeholder</key>
+    		<string>com.apple.mobilemail</string>
+    		<key>bestGuess</key>
+    		<string>com.apple.mobilemail</string>
+    		<key>defaults</key>
+    		<string>com.nathanaccidentally.dockprefs</string>
+    		<key>key</key>
+    		<string>iconThreeID</string>
+    		<key>label</key>
+    		<string>Icon 3 Bundle ID</string>
+		</dict>
+		<dict>
+    		<key>cell</key>
+    		<string>PSEditTextCell</string>
+    		<key>placeholder</key>
+    		<string>com.apple.Music</string>
+    		<key>bestGuess</key>
+    		<string>com.apple.Music</string>
+    		<key>defaults</key>
+    		<string>com.nathanaccidentally.dockprefs</string>
+    		<key>key</key>
+    		<string>iconFourID</string>
+    		<key>label</key>
+    		<string>Icon 4 Bundle ID</string>
 		</dict>
 		<dict>
 			<key>cell</key>
