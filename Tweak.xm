@@ -4,7 +4,11 @@
 // Setting up headers.
 
 @interface SBDockView : UIView // Dock view. We create this later for the floating dock and also for frame and layer.
-- (void)appendGesturesToView;
+- (void)appendGesturesToView; // For the float.
+@end
+
+@interface UIWindow (floatingDock)
+- (void)appendGesturesToView; // For the float.
 @end
 
 // This is for hiding the icon labels.
@@ -23,7 +27,6 @@
 
 @interface SBIconViewMap : NSObject
 - (id)iconViewForIcon:(SBIcon *)icon;
-- (SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
 @end
 
 @interface SBIconModel : NSObject
@@ -74,12 +77,12 @@ NSString *iconFourID = @"com.apple.Music";
 - (void)didMoveToWindow {
 	%orig;
 	// In here we wanna do two things, set clipsToBounds, and the cornerRadius.
-	NSLog(@"Dock: SBDockView was hooked and didMoveToWindow was called. We will now setClipsToBounds and cornerRadius.");
+	NSLog(@"Dock: SBDockView was hooked and didMoveToWindow was called. We will now setClipsToBounds and cornerRadius. Will also appendGesturesToView if enabled.");
 
 	[self setClipsToBounds:YES];
 	[self.layer setCornerRadius:13];
 	
-	if (floatDock && dragDock) {
+	if (floatDock && dragDock && [self.superview isMemberOfClass:objc_getClass("UIWindow")]) { // Should apply if it's the floating dock. :)
 		// This is called if we wanna make our floating dock draggable.
 		[self setUserInteractionEnabled:YES];
 		[self appendGesturesToView];
@@ -117,8 +120,8 @@ NSString *iconFourID = @"com.apple.Music";
 
 %new
 - (void)panMoved:(UIPanGestureRecognizer*)recognizer {
-	if (recognizer.state == UIGestureRecognizerStateEnded) {
-		[self appendGesturesToView]; // Should re-add the recognizers after completed.
+	if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateChanged) {
+		[(UIWindow *)self.superview setCenter:self.center]; // Should set to finger position.
 	}
 
 	NSLog(@"Dock panMovement recognizer called.");
@@ -148,6 +151,17 @@ NSString *iconFourID = @"com.apple.Music";
 
 %end
 
+// Now I'm going to attemt to stop icon recycling
+
+%hook SBIconViewMap
+
+- (void)recycleViewForIcon:(SBIcon *)icon {
+    %orig;
+    NSLog(@"RECYCLED ICON");
+}
+
+%end
+
 // Now we're done so we need to end our group.
 %end
 
@@ -170,11 +184,11 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		// Here's our window we're making.
 		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 10)];
-		dockWindow.windowLevel = UIWindowLevelAlert; // Should behave normally on the SpringBoard at least.
+		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
 
-		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight + 10)];
 		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.25]];
 
 		NSLog(@"Dock: Our floating dock instance of SBDockView has been created. Making blur view.");
