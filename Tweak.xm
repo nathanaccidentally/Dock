@@ -4,6 +4,11 @@
 // Setting up headers.
 
 @interface SBDockView : UIView // Dock view. We create this later for the floating dock and also for frame and layer.
+- (void)appendGesturesToView; // For the float.
+@end
+
+@interface UIWindow (floatingDock)
+- (void)appendGesturesToView; // For the float.
 @end
 
 // This is for hiding the icon labels.
@@ -21,7 +26,7 @@
 @end
 
 @interface SBIconViewMap : NSObject
-- (SBIconView *)mappedIconViewForIcon:(SBIcon *)icon;
+- (id)iconViewForIcon:(SBIcon *)icon;
 @end
 
 @interface SBIconModel : NSObject
@@ -45,10 +50,9 @@
 static BOOL enabled = NO;
 static BOOL floatDock = NO;
 static BOOL hideLabels = NO;
+static BOOL dragDock = NO;
 
-// Now we will set other things like values for our frames (CGFloat) and an NSInteger which will also become a float for use with frame.
-
-static NSInteger floatyValue = 0; // Added to final Y value of our UIVIew.
+// Now we will set other things like values for our frames (CGFloat).
 
 CGFloat setDockWidth; // Being used to store CGFloats of frame values from our final set dock.
 CGFloat setDockHeight; // Being used to store CGFloats of frame values from our final set dock.
@@ -73,10 +77,16 @@ NSString *iconFourID = @"com.apple.Music";
 - (void)didMoveToWindow {
 	%orig;
 	// In here we wanna do two things, set clipsToBounds, and the cornerRadius.
-	NSLog(@"Dock: SBDockView was hooked and didMoveToWindow was called. We will now setClipsToBounds and cornerRadius.");
+	NSLog(@"Dock: SBDockView was hooked and didMoveToWindow was called. We will now setClipsToBounds and cornerRadius. Will also appendGesturesToView if enabled.");
 
 	[self setClipsToBounds:YES];
 	[self.layer setCornerRadius:13];
+	
+	if (floatDock && dragDock && [self.superview isMemberOfClass:objc_getClass("UIWindow")]) { // Should apply if it's the floating dock. :)
+		// This is called if we wanna make our floating dock draggable.
+		[self setUserInteractionEnabled:YES];
+		[self appendGesturesToView];
+	}
 
 	NSLog(@"Dock: cornerRadius and setClipsToBounds should be successfully set.");
 }
@@ -87,7 +97,7 @@ NSString *iconFourID = @"com.apple.Music";
 	// Here we need to make the dock more slim both width and height wise, as well as move it up slightly.
 	NSLog(@"Dock: setFrame was called on the dock, setting width, height, x, and y values.");
 
-	frame = CGRectMake(5, frame.origin.y - 2, frame.size.width - 10, frame.size.height - 5);
+	frame = CGRectMake(5, frame.origin.y, frame.size.width - 10, frame.size.height - 10);
 	%orig(frame);
 
 	// Now we need to store our frame values within our CGFloat variables.
@@ -97,6 +107,25 @@ NSString *iconFourID = @"com.apple.Music";
 	setDockY = self.frame.origin.y;
 
 	NSLog(@"Dock: setFrame has finished running on the dock.");
+}
+
+// These are the methods for moving the dock.
+
+%new
+- (void)appendGesturesToView {
+	NSLog(@"Dock: appendGesturesToView was called.");
+	UIPanGestureRecognizer *panMovement = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panMoved:)];
+	[self addGestureRecognizer:panMovement];
+}
+
+%new
+- (void)panMoved:(UIPanGestureRecognizer*)recognizer {
+	NSLog(@"Dock panMovement recognizer called.");
+	UIView *pannedView = recognizer.view;
+	CGPoint translation = [recognizer translationInView:pannedView.superview];
+	pannedView.center = CGPointMake(pannedView.center.x + translation.x, pannedView.center.y + translation.y);
+	[(UIWindow *)self.superview setCenter:pannedView.center];
+	[recognizer setTranslation:CGPointZero inView:pannedView.superview];
 }
 
 %end
@@ -140,12 +169,12 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: We have been cleared to create our own dock view. Creating.");
 
 		// Here's our window we're making.
-		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY + floatyValue, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		UIWindow *dockWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, setDockY, UIScreen.mainScreen.bounds.size.width, setDockHeight + 10)];
 		dockWindow.windowLevel = UIWindowLevelNormal; // Should behave normally on the SpringBoard at least.
 
 		NSLog(@"Dock: Our UIWindow (dockWindow) was created. Now making our SBDockView.");
 
-		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight + 5)];
+		SBDockView *floatingDock = [[NSClassFromString(@"SBDockView") alloc] initWithFrame:CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.width, setDockHeight + 10)];
 		[floatingDock setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.25]];
 
 		NSLog(@"Dock: Our floating dock instance of SBDockView has been created. Making blur view.");
@@ -156,16 +185,16 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 		NSLog(@"Dock: Created _UIBackdropView blur and attached it to the floatingDock as a subview. Creating our SpringBoard icons.");
 
 		SBIcon *iconOne = [[iconController model] expectedIconForDisplayIdentifier:iconOneID];
-        SBIconView *iconViewOne = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconOne];
+        SBIconView *iconViewOne = [[iconController homescreenIconViewMap] iconViewForIcon:iconOne];
 
         SBIcon *iconTwo = [[iconController model] expectedIconForDisplayIdentifier:iconTwoID];
-        SBIconView *iconViewTwo = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconTwo];
+        SBIconView *iconViewTwo = [[iconController homescreenIconViewMap] iconViewForIcon:iconTwo];
 
         SBIcon *iconThree = [[iconController model] expectedIconForDisplayIdentifier:iconThreeID];
-        SBIconView *iconViewThree = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconThree];
+        SBIconView *iconViewThree = [[iconController homescreenIconViewMap] iconViewForIcon:iconThree];
 
         SBIcon *iconFour = [[iconController model] expectedIconForDisplayIdentifier:iconFourID];
-        SBIconView *iconViewFour = [[iconController homescreenIconViewMap] mappedIconViewForIcon:iconFour];
+        SBIconView *iconViewFour = [[iconController homescreenIconViewMap] iconViewForIcon:iconFour];
 
         NSLog(@"Dock: Attaching icons to our floating dock.");
 
@@ -212,13 +241,28 @@ static void viewLoadedCallback(CFNotificationCenterRef center, void *observer, C
 
 		NSLog(@"Dock: Loading settings for floating dock.");
 
-		if ([prefs objectForKey:@"floatyValue"]) {
-			floatyValue = [[prefs objectForKey:@"floatyValue"] intValue];
+		if ([prefs objectForKey:@"dragDock"]) {
+			dragDock = [[prefs objectForKey:@"dragDock"] boolValue];
 		}
 
 		if ([prefs objectForKey:@"iconOneID"]) {
 			iconOneID = [[prefs objectForKey:@"iconOneID"] stringValue];
 		}
+
+		if ([prefs objectForKey:@"iconTwoID"]) {
+			iconTwoID = [[prefs objectForKey:@"iconTwoID"] stringValue];
+		}
+
+		if ([prefs objectForKey:@"iconThreeID"]) {
+			iconThreeID = [[prefs objectForKey:@"iconThreeID"] stringValue];
+		}
+
+		if ([prefs objectForKey:@"iconFourID"]) {
+			iconFourID = [[prefs objectForKey:@"iconFourID"] stringValue];
+		}
+
+		// I only allow 4 icons in the floating dock. Sorry.
+
 	}
 }
 
