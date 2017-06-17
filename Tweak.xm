@@ -120,14 +120,11 @@ NSString *iconFourID = @"com.apple.Music";
 
 %new
 - (void)panMoved:(UIPanGestureRecognizer*)recognizer {
-	if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateChanged) {
-		[(UIWindow *)self.superview setCenter:self.center]; // Should set to finger position.
-	}
-
 	NSLog(@"Dock panMovement recognizer called.");
 	UIView *pannedView = recognizer.view;
 	CGPoint translation = [recognizer translationInView:pannedView.superview];
 	pannedView.center = CGPointMake(pannedView.center.x + translation.x, pannedView.center.y + translation.y);
+	[(UIWindow *)self.superview setCenter:pannedView.center];
 	[recognizer setTranslation:CGPointZero inView:pannedView.superview];
 }
 
@@ -147,17 +144,6 @@ NSString *iconFourID = @"com.apple.Music";
 		[self setHidden:YES];
 		NSLog(@"Dock: Icon labels should be hidden.");
 	}
-}
-
-%end
-
-// Now I'm going to attemt to stop icon recycling
-
-%hook SBIconViewMap
-
-- (void)recycleViewForIcon:(SBIcon *)icon {
-    %orig;
-    NSLog(@"RECYCLED ICON");
 }
 
 %end
